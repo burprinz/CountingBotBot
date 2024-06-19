@@ -30,6 +30,7 @@ public class Main implements NativeKeyListener {
         s = new Screen();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
+        frame.setAlwaysOnTop(true);
         frame.add(s);
         frame.pack();
         frame.setLocationRelativeTo(null);

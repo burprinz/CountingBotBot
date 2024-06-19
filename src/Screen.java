@@ -5,15 +5,18 @@ import java.awt.event.KeyEvent;
 
 public class Screen extends JPanel {
 
-    public static final int WIDTH = 200, HEIGHT = 90;
+    public static final int WIDTH = 200, HEIGHT = 125;
 
     Point[] points;
 
-    JLabel pointInfo;
+    JLabel pointInfo, currentStateInfo, delayInfo;
     JButton startButton, numPointsB;
-    JSpinner startNum, endNum;
+    JSpinner startNum, endNum, delaySpinner;
 
-    boolean running = false;
+    int delay;
+    int curCount;
+    int endCount;
+    int counter = 0;
     boolean selecting;
 
     public Screen() {
@@ -55,7 +58,9 @@ public class Screen extends JPanel {
         numPointsB.setBounds(x,y,200,20);
         numPointsB.addActionListener(list -> {
             if (!selecting) {
+                currentStateInfo.setText("Go to position and press p for 1. pos");
                 points = new Point[2];
+                pointInfo.setText("(x,y)   (x,y)");
                 selecting = true;
             }
         });
@@ -69,7 +74,7 @@ public class Screen extends JPanel {
 
         y += 15;
 
-        startButton = new JButton("Start");
+        startButton = new JButton("Start (q = stop)");
         startButton.setBounds(x,y,200,20);
         startButton.addActionListener(list -> {
             if (points != null && points[0] != null && points[1] != null) {
@@ -82,6 +87,27 @@ public class Screen extends JPanel {
             }
         });
         this.add(startButton);
+
+        y += 20;
+
+        delayInfo = new JLabel("Delay (ms):");
+        delayInfo.setBounds(x,y,80,20);
+        this.add(delayInfo);
+
+        x += 80;
+
+        delaySpinner = new JSpinner();
+        delaySpinner.setValue(2000);
+        delaySpinner.setBounds(x,y,120,20);
+        this.add(delaySpinner);
+
+        x = 0;
+        y += 20;
+
+        currentStateInfo = new JLabel("Select Points", SwingConstants.CENTER);
+        currentStateInfo.setBounds(x,y,200,15);
+        this.add(currentStateInfo);
+
 
     }
 
@@ -105,13 +131,15 @@ public class Screen extends JPanel {
         }
     }
 
-    int curCount;
-    int endCount;
+    boolean running;
+
     private void start() throws InterruptedException {
         curCount = (int) startNum.getValue();
         endCount = (int) endNum.getValue();
+        delay = (int) delaySpinner.getValue();
+        running = true;
 
-        Robot r = null;
+        Robot r;
         try {
             r = new Robot();
         } catch (AWTException e) {
@@ -121,21 +149,21 @@ public class Screen extends JPanel {
         if (r == null) System.exit(0);
 
         if (endCount == 0) {
-            for (;;) {
+            while (running) {
                 countNext(r);
-                Thread.sleep(1500);
+                Thread.sleep(delay);
             }
         } else {
-            for (int i = curCount; i <= endCount; i++) {
+            for (int i = curCount; i <= endCount && running; i++) {
                 countNext(r);
-                Thread.sleep(1500);
+                Thread.sleep(delay);
             }
         }
     }
 
     private void countNext(Robot r) throws InterruptedException {
 
-        Point p = points[curCount%2];
+        Point p = points[counter%2];
         r.mouseMove(p.x, p.y);
         Thread.sleep(10);
         r.mousePress(InputEvent.BUTTON1_MASK);
@@ -143,6 +171,7 @@ public class Screen extends JPanel {
 
         writeNumber(r, curCount);
 
+        counter++;
         curCount++;
     }
 
@@ -153,8 +182,10 @@ public class Screen extends JPanel {
                 if (this.selecting) {
                     if (points[0] == null) {
                         points[0] = MouseInfo.getPointerInfo().getLocation();
+                        currentStateInfo.setText("Go to position and press p for 2. pos");
                     } else {
                         points[1] = MouseInfo.getPointerInfo().getLocation();
+                        currentStateInfo.setText("Press start or change pos");
                         this.selecting = false;
                     }
                     updateLabel();
@@ -162,7 +193,8 @@ public class Screen extends JPanel {
                 break;
             case 16:
                 // Q
-                System.exit(0);
+                running = false;
+                startNum.setValue(curCount);
                 break;
         }
     }
