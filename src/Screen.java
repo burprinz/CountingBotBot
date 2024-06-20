@@ -163,11 +163,15 @@ public class Screen extends JPanel {
 
     private void countNext(Robot r) throws InterruptedException {
 
-        Point p = points[counter%2];
+        int i = counter%2;
+
+        Point p = points[i];
         r.mouseMove(p.x, p.y);
-        Thread.sleep(10);
+        Thread.sleep(20);
         r.mousePress(InputEvent.BUTTON1_MASK);
+        Thread.sleep(20);
         r.mouseRelease(InputEvent.BUTTON1_MASK);
+        Thread.sleep(20);
 
         writeNumber(r, curCount);
 
@@ -199,56 +203,77 @@ public class Screen extends JPanel {
         }
     }
 
-    private static void writeNumber(Robot robot, int num) {
+    private static void writeNumber(Robot robot, int num) throws InterruptedException {
         String str = ""+num;
         for (char c : str.toCharArray()) {
             writeNumChar(robot, Integer.parseInt(""+c));
         }
         robot.keyPress(KeyEvent.VK_ENTER);
+        Thread.sleep(20);
         robot.keyRelease(KeyEvent.VK_ENTER);
     }
 
-    private static void writeNumChar(Robot robot, int num) {
+    private static void writeNumChar(Robot robot, int num) throws InterruptedException {
         switch (num) {
             case 0:
                 robot.keyPress(KeyEvent.VK_0);
+                Thread.sleep(20);
                 robot.keyRelease(KeyEvent.VK_0);
+                Thread.sleep(20);
                 break;
             case 1:
                 robot.keyPress(KeyEvent.VK_1);
+                Thread.sleep(20);
                 robot.keyRelease(KeyEvent.VK_1);
+                Thread.sleep(20);
                 break;
             case 2:
                 robot.keyPress(KeyEvent.VK_2);
+                Thread.sleep(20);
                 robot.keyRelease(KeyEvent.VK_2);
+                Thread.sleep(20);
                 break;
             case 3:
                 robot.keyPress(KeyEvent.VK_3);
+                Thread.sleep(20);
                 robot.keyRelease(KeyEvent.VK_3);
+                Thread.sleep(20);
                 break;
             case 4:
                 robot.keyPress(KeyEvent.VK_4);
+                Thread.sleep(20);
                 robot.keyRelease(KeyEvent.VK_4);
+                Thread.sleep(20);
                 break;
             case 5:
                 robot.keyPress(KeyEvent.VK_5);
+                Thread.sleep(20);
                 robot.keyRelease(KeyEvent.VK_5);
+                Thread.sleep(20);
                 break;
             case 6:
                 robot.keyPress(KeyEvent.VK_6);
+                Thread.sleep(20);
                 robot.keyRelease(KeyEvent.VK_6);
+                Thread.sleep(20);
                 break;
             case 7:
                 robot.keyPress(KeyEvent.VK_7);
+                Thread.sleep(20);
                 robot.keyRelease(KeyEvent.VK_7);
+                Thread.sleep(20);
                 break;
             case 8:
                 robot.keyPress(KeyEvent.VK_8);
+                Thread.sleep(20);
                 robot.keyRelease(KeyEvent.VK_8);
+                Thread.sleep(20);
                 break;
             case 9:
                 robot.keyPress(KeyEvent.VK_9);
+                Thread.sleep(20);
                 robot.keyRelease(KeyEvent.VK_9);
+                Thread.sleep(20);
                 break;
         }
     }
